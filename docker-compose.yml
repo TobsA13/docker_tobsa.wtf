@@ -85,7 +85,6 @@ services:
     restart: unless-stopped
     ports:
       - 39987-39988:39987-39988/udp
-      - 39987:39987/udp
       - 10022:10022
       - 30033:30033
     environment:
