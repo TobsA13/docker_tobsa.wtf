@@ -8,7 +8,8 @@ services:
   db:
     image: 'mariadb:10'
     restart: unless-stopped
-    env_file: ./secrets/mariadb.env
+    environment:
+      - MARIADB_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD:?err}
     networks:
       - backend
     volumes:
