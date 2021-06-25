@@ -1,11 +1,28 @@
 version: "3.9"
+
+networks:
+  backend:
+    driver: bridge
+
 services:
   db:
-    image: mariadb
+    image: 'mariadb:10'
     restart: unless-stopped
     env_file: ./secrets/mariadb.env
+    networks:
+      - backend
     volumes:
       - "mariadb:/var/lib/mysql"
+
+  phpmyadmin:
+    image: 'phpmyadmin:5'
+    restart: unless-stopped
+    environment:
+      - PMA_HOST=db
+      - PMA_VERBOSE=tobsa.wtf
+      - PMA_ABSOLUTE_URI=pma.tobsa.dev
+    networks:
+      - backend
 
   npm:
     image: 'jc21/nginx-proxy-manager:latest'
@@ -19,25 +36,68 @@ services:
       - '81:81'
       # Add any other Stream port you want to expose
       # - '21:21' # FTP
-    env_file: ./secrets/npm.env
     environment:
       # These are the settings to access your db
       DB_MYSQL_HOST: "db"
       DB_MYSQL_PORT: 3306
       DB_MYSQL_USER: "npm"
-      #DB_MYSQL_PASSWORD: "npm"
+      DB_MYSQL_PASSWORD: "npm"
       DB_MYSQL_NAME: "npm"
       # If you would rather use Sqlite uncomment this
       # and remove all DB_MYSQL_* lines above
       # DB_SQLITE_FILE: "/data/database.sqlite"
       # Uncomment this if IPv6 is not enabled on your host
-      DISABLE_IPV6: 'true'
+      #DISABLE_IPV6: 'true'
+    networks:
+      - backend
     volumes:
       - "npm_data:/data"
       - "npm_letsencrypt:/etc/letsencrypt"
     depends_on:
       - db
 
-secrets:
-  mysql_root_password:
-    file: ./secrets/mysql_root_password
+  web-server:
+    build:
+      dockerfile: webserver.dockerfile
+      context: .
+    restart: unless-stopped
+    networks:
+      - backend
+    volumes:
+      - "/opt/www:/var/www/html/"
+    depends_on:
+      - db
+
+  teamspeak:
+    image: teamspeak
+    restart: unless-stopped
+    ports:
+      - 39987-39988:39987-39988/udp
+      - 39987:39987/udp
+      - 10022:10022
+      - 30033:30033
+    environment:
+      TS3SERVER_DB_PLUGIN: ts3db_mariadb
+      TS3SERVER_DB_SQLCREATEPATH: create_mariadb
+      TS3SERVER_DB_HOST: db
+      TS3SERVER_DB_USER: teamspeak
+      TS3SERVER_DB_PASSWORD: teamspeak
+      TS3SERVER_DB_NAME: teamspeak
+      TS3SERVER_DB_WAITUNTILREADY: 30
+      TS3SERVER_LICENSE: accept
+      TS3SERVER_QUERY_PROTOCOLS: ssh
+    networks:
+      - backend
+    volumes:
+      - "ts3data:/var/ts3server"
+    depends_on:
+      - db
+
+  ts3-manager:
+    image: "joni1802/ts3-manager"
+    environment:
+      - WHITELIST=teamspeak
+    networks:
+      - backend
+    depends_on:
+      - teamspeak
