@@ -9,7 +9,7 @@ services:
     image: 'mariadb:10'
     restart: unless-stopped
     environment:
-      - MARIADB_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD:?err}
+      - 'MARIADB_ROOT_PASSWORD:${MARIADB_ROOT_PASSWORD:?err}'
     networks:
       - backend
     volumes:
