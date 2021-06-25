@@ -5,7 +5,7 @@ networks:
     driver: bridge
 
 volumes:
-  db:
+  mariadb:
   npm_data:
   npm_letsencrypt:
   ts3data:
