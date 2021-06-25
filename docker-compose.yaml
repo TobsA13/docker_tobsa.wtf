@@ -4,6 +4,12 @@ networks:
   backend:
     driver: bridge
 
+volumes:
+  db:
+  npm_data:
+  npm_letsencrypt:
+  ts3data:
+
 services:
   db:
     image: 'mariadb:10'
