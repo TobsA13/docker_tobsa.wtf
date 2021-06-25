@@ -25,6 +25,7 @@ services:
       - backend
     volumes:
       - "mariadb:/var/lib/mysql"
+      - "/etc/localtime:/etc/localtime:ro"
 
   phpmyadmin:
     image: 'phpmyadmin:5'
@@ -35,6 +36,8 @@ services:
       - PMA_ABSOLUTE_URI=pma.tobsa.dev
     networks:
       - backend
+    volumes:
+      - "/etc/localtime:/etc/localtime:ro"
 
   npm:
     image: 'jc21/nginx-proxy-manager:latest'
@@ -65,6 +68,7 @@ services:
     volumes:
       - "npm_data:/data"
       - "npm_letsencrypt:/etc/letsencrypt"
+      - "/etc/localtime:/etc/localtime:ro"
     depends_on:
       - db
 
@@ -77,6 +81,7 @@ services:
       - backend
     volumes:
       - "/opt/www:/var/www/html/"
+      - "/etc/localtime:/etc/localtime:ro"
     depends_on:
       - db
 
@@ -101,6 +106,7 @@ services:
       - backend
     volumes:
       - "ts3data:/var/ts3server"
+      - "/etc/localtime:/etc/localtime:ro"
     depends_on:
       - db
 
