@@ -33,7 +33,7 @@ services:
     environment:
       - PMA_HOST=db
       - PMA_VERBOSE=tobsa.wtf
-      - PMA_ABSOLUTE_URI=pma.tobsa.dev
+#      - PMA_ABSOLUTE_URI=pma.tobsa.dev
     networks:
       - backend
     volumes:
