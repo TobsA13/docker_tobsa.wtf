@@ -72,7 +72,20 @@ services:
     depends_on:
       - db
 
-  web-server:
+  web-public:
+    build:
+      dockerfile: webserver-public.dockerfile
+      context: .
+    restart: unless-stopped
+    networks:
+      - backend
+    volumes:
+      - "/opt/www-public:/var/www/html/"
+      - "/etc/localtime:/etc/localtime:ro"
+    depends_on:
+      - db
+
+  web-vpn:
     build:
       dockerfile: webserver.dockerfile
       context: .
@@ -80,7 +93,7 @@ services:
     networks:
       - backend
     volumes:
-      - "/opt/www:/var/www/html/"
+      - "/opt/www-vpn:/var/www/html/"
       - "/etc/localtime:/etc/localtime:ro"
     depends_on:
       - db
