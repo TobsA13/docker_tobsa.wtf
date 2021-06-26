@@ -87,7 +87,7 @@ services:
 
   web-vpn:
     build:
-      dockerfile: webserver.dockerfile
+      dockerfile: webserver-vpn.dockerfile
       context: .
     restart: unless-stopped
     networks:
