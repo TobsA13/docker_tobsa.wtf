@@ -129,6 +129,7 @@ services:
     image: containrrr/watchtower
     environment:
       WATCHTOWER_SCHEDULE: "0 0 6 * * *"
+      WATCHTOWER_CLEANUP: true
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock"
       - "/etc/localtime:/etc/localtime:ro"
