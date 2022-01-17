@@ -50,7 +50,7 @@ services:
       # Admin Web Port (accessible via NPM #loop):
       # - '81:81'
       # Add any other Stream port you want to expose
-      # - '21:21' # FTP
+      - '1337:1337' # Teststreams
     environment:
       # These are the settings to access your db
       DB_MYSQL_HOST: "db"
