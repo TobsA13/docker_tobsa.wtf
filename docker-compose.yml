@@ -139,10 +139,13 @@ services:
     image: ghcr.io/dgtlmoon/changedetection.io
     restart: unless-stopped
     volumes:
+      - "/etc/localtime:/etc/localtime:ro"
       - changedetection-data:/datastore
     environment:
       - USE_X_SETTINGS=1
       - BASE_URL=https://cd.tobsa.dev
+    networks:
+      - backend
 
   watchtower:
     container_name: watchtower
