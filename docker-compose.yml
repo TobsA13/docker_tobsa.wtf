@@ -142,6 +142,7 @@ services:
       - changedetection-data:/datastore
     environment:
       - USE_X_SETTINGS=1
+      - BASE_URL=https://cd.tobsa.dev
 
   watchtower:
     container_name: watchtower
