@@ -124,6 +124,14 @@ services:
       - backend
     depends_on:
       - teamspeak
+      
+  changedetection:
+    image: ghcr.io/dgtlmoon/changedetection.io
+    restart: unless-stopped
+    volumes:
+      - changedetection-data:/datastore
+    environment:
+      - USE_X_SETTINGS=1
 
   watchtower:
     image: containrrr/watchtower
