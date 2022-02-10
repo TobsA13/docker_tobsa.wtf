@@ -18,6 +18,7 @@ volumes:
 
 services:
   db:
+    container_name: db
     image: 'mariadb:10'
     restart: unless-stopped
     environment:
@@ -29,6 +30,7 @@ services:
       - "/etc/localtime:/etc/localtime:ro"
 
   phpmyadmin:
+    container_name: phpmyadmin
     image: 'phpmyadmin:5'
     restart: unless-stopped
     environment:
@@ -41,6 +43,7 @@ services:
       - "/etc/localtime:/etc/localtime:ro"
 
   npm:
+    container_name: npm
     image: 'jc21/nginx-proxy-manager:latest'
     restart: unless-stopped
     ports:
@@ -74,6 +77,7 @@ services:
       - db
 
   web-public:
+    container_name: web-public
     build:
       dockerfile: webserver-public.dockerfile
       context: .
@@ -87,6 +91,7 @@ services:
       - db
 
   web-vpn:
+    container_name: web-vpn
     build:
       dockerfile: webserver-vpn.dockerfile
       context: .
@@ -100,6 +105,7 @@ services:
       - db
 
   teamspeak:
+    container_name: teamspeak
     image: teamspeak
     restart: unless-stopped
     ports:
@@ -117,8 +123,10 @@ services:
     depends_on:
       - db
 
-  ts3-manager:
+  ts-manager:
+    container_name: ts-manager
     image: "joni1802/ts3-manager"
+    restart: unless-stopped
     environment:
       - WHITELIST=teamspeak
     networks:
@@ -127,6 +135,7 @@ services:
       - teamspeak
       
   changedetection:
+    container_name: changedetection
     image: ghcr.io/dgtlmoon/changedetection.io
     restart: unless-stopped
     volumes:
@@ -135,6 +144,7 @@ services:
       - USE_X_SETTINGS=1
 
   watchtower:
+    container_name: watchtower
     image: containrrr/watchtower
     environment:
       WATCHTOWER_SCHEDULE: "0 0 6 * * *"
