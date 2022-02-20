@@ -21,8 +21,6 @@ services:
     container_name: db
     image: 'mariadb:10'
     restart: unless-stopped
-    environment:
-      - "MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD:?err}"
     networks:
       - backend
     volumes:
@@ -79,8 +77,7 @@ services:
   web-public:
     container_name: web-public
     build:
-      dockerfile: webserver-public.dockerfile
-      context: .
+      context: webserver-public/.
     restart: unless-stopped
     networks:
       - backend
@@ -93,8 +90,7 @@ services:
   web-vpn:
     container_name: web-vpn
     build:
-      dockerfile: webserver-vpn.dockerfile
-      context: .
+      context: webserver-vpn/.
     restart: unless-stopped
     networks:
       - backend
