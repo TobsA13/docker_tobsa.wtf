@@ -164,7 +164,6 @@ services:
       - SITE_NAME=TobsA.WTF Healthcheck
       - ALLOWED_HOSTS=["hc.tobsa.dev"]
       - SUPERUSER_EMAIL=hc@tobsa.wtf
-      - SUPERUSER_PASSWORD=RPFlBvxo8xoQtE1sKbfp
       - REGISTRATION_OPEN=False
       - DEBUG=False
       - REGENERATE_SETTINGS=True
