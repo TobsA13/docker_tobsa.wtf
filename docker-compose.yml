@@ -15,6 +15,7 @@ volumes:
   npm_letsencrypt:
   ts3data:
   changedetection-data:
+  healthchecks-data:
 
 services:
   db:
@@ -146,9 +147,28 @@ services:
   watchtower:
     container_name: watchtower
     image: containrrr/watchtower
+    restart: unless-stopped
     environment:
       WATCHTOWER_SCHEDULE: "0 0 6 * * *"
       WATCHTOWER_CLEANUP: "true"
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock"
       - "/etc/localtime:/etc/localtime:ro"
+
+  healthchecks:
+    container_name: healthchecks
+    image: lscr.io/linuxserver/healthchecks
+    restart: unless-stopped
+    environment:
+      - SITE_ROOT=https://hc.tobsa.dev
+      - SITE_NAME=TobsA.WTF Healthcheck
+      - ALLOWED_HOSTS=["hc.tobsa.dev"]
+      - SUPERUSER_EMAIL=hc@tobsa.wtf
+      - SUPERUSER_PASSWORD=RPFlBvxo8xoQtE1sKbfp
+      - REGISTRATION_OPEN=False
+      - DEBUG=False
+      - REGENERATE_SETTINGS=True
+    volumes:
+      - healthchecks-data:/config
+    networks:
+      - backend
