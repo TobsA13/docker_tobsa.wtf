@@ -16,6 +16,7 @@ volumes:
   ts3data:
   changedetection-data:
   healthchecks-data:
+  hedgedoc-data:
 
 services:
   db:
@@ -171,3 +172,24 @@ services:
       - healthchecks-data:/config
     networks:
       - backend
+
+  hedgedoc:
+    container_name: hedgedoc
+    # Make sure to use the latest release from https://hedgedoc.org/latest-release
+    image: quay.io/hedgedoc/hedgedoc:1.9.3
+    restart: unless-stopped
+    environment:
+      - CMD_DB_URL=mysql://hedgedoc:hedgedoc@db:3306/hedgedoc
+      - CMD_DOMAIN=pad.tobsa.wtf
+      - CMD_URL_ADDPORT=false
+      - CMD_ALLOW_ANONYMOUS=false
+      - CMD_DEFAULT_PERMISSION=private
+      - CMD_EMAIL=false
+      - CMD_ALLOW_EMAIL_REGISTER=False
+      - NEXTCLOUD STUFF !"§§!"
+    volumes:
+      - hedgedoc-data:/hedgedoc/public/uploads
+    networks:
+      - backend
+    depends_on:
+      - db
