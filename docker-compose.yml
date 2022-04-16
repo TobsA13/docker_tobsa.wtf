@@ -186,7 +186,7 @@ services:
       - CMD_DEFAULT_PERMISSION=private
       - CMD_EMAIL=false
       - CMD_ALLOW_EMAIL_REGISTER=False
-      - NEXTCLOUD STUFF !"§§!"
+#      - NEXTCLOUD STUFF !"§§!"  #TODO
     volumes:
       - hedgedoc-data:/hedgedoc/public/uploads
     networks:
