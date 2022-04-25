@@ -181,12 +181,21 @@ services:
     environment:
       - CMD_DB_URL=mysql://hedgedoc:hedgedoc@db:3306/hedgedoc
       - CMD_DOMAIN=pad.tobsa.wtf
+      - CMD_PROTOCOL_USESSL=true
       - CMD_URL_ADDPORT=false
       - CMD_ALLOW_ANONYMOUS=false
       - CMD_DEFAULT_PERMISSION=private
       - CMD_EMAIL=false
       - CMD_ALLOW_EMAIL_REGISTER=False
-      - NEXTCLOUD STUFF !"§§!"
+      - CMD_OAUTH2_AUTHORIZATION_URL=https://cloud.tobsa.wtf/apps/oauth2/authorize
+      - CMD_OAUTH2_TOKEN_URL=https://cloud.tobsa.wtf/apps/oauth2/api/v1/token
+      - CMD_OAUTH2_USER_PROFILE_URL=https://cloud.tobsa.wtf/ocs/v2.php/cloud/user?format=json
+      - CMD_OAUTH2_USER_PROFILE_USERNAME_ATTR=ocs.data.id
+      - CMD_OAUTH2_USER_PROFILE_DISPLAY_NAME_ATTR=ocs.data.display-name
+      - CMD_OAUTH2_USER_PROFILE_EMAIL_ATTR=ocs.data.email
+      #Secrets in hedgedoc.env
+    env_file:
+      - hedgedoc.env
     volumes:
       - hedgedoc-data:/hedgedoc/public/uploads
     networks:
