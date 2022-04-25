@@ -163,7 +163,7 @@ services:
     environment:
       - SITE_ROOT=https://hc.tobsa.dev
       - SITE_NAME=TobsA.WTF Healthcheck
-      - ALLOWED_HOSTS=["hc.tobsa.dev"]
+      - ALLOWED_HOSTS=["hc.tobsa.dev","hc.tobsa.wtf"]
       - SUPERUSER_EMAIL=hc@tobsa.wtf
       - REGISTRATION_OPEN=False
       - DEBUG=False
