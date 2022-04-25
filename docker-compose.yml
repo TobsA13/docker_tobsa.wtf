@@ -193,3 +193,14 @@ services:
       - backend
     depends_on:
       - db
+
+  restic:
+    container_name: restic
+    image: restic/rest-server:latest
+    restart: unless-stopped
+    environment:
+      - OPTIONS="--append-only --private-repos"
+    volumes:
+      - /mnt/restic_backup:/data
+    networks:
+      - backend
