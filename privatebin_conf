@@ -120,7 +120,7 @@ default = "1week"
 1day = 86400
 1week = 604800
 ; Well this is not *exactly* one month, it's 30 days:
-1month = 2592000
+;1month = 2592000
 
 [formatter_options]
 ; Set available formatters, their order and their labels
