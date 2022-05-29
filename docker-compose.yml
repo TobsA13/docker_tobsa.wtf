@@ -17,6 +17,7 @@ volumes:
   changedetection-data:
   healthchecks-data:
   hedgedoc-data:
+  privatebin-data:
 
 services:
   db:
@@ -202,6 +203,17 @@ services:
       - backend
     depends_on:
       - db
+
+  privatebin:
+    container_name: privatebin
+    image: privatebin/nginx-fpm-alpine:latest
+    read_only: true
+    restart: unless-stopped
+    volumes:
+      - privatebin-data:/srv/data
+      - ./privatebin_conf:/srv/cfg/conf.php:ro
+    networks:
+      - backend
 
   restic:
     container_name: restic
