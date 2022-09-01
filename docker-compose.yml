@@ -214,14 +214,3 @@ services:
       - ./privatebin_conf:/srv/cfg/conf.php:ro
     networks:
       - backend
-
-  restic:
-    container_name: restic
-    image: restic/rest-server:latest
-    restart: unless-stopped
-    environment:
-      - OPTIONS=--append-only --private-repos
-    volumes:
-      - /mnt/restic_backup:/data
-    networks:
-      - backend
