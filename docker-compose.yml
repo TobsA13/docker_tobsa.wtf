@@ -26,6 +26,8 @@ services:
     container_name: db
     image: 'mariadb:10'
     restart: unless-stopped
+    environment:
+      - TZ=Europe/Berlin
     networks:
       - backend
     volumes:
@@ -37,6 +39,7 @@ services:
     image: 'phpmyadmin:5'
     restart: unless-stopped
     environment:
+      - TZ=Europe/Berlin
       - PMA_HOST=db
       - PMA_VERBOSE=tobsa.wtf
 #      - PMA_ABSOLUTE_URI=pma.tobsa.dev
@@ -59,12 +62,13 @@ services:
       # Add any other Stream port you want to expose
       - '1337:1337' # Teststreams
     environment:
+      - TZ=Europe/Berlin
       # These are the settings to access your db
-      DB_MYSQL_HOST: "db"
-      DB_MYSQL_PORT: 3306
-      DB_MYSQL_USER: "npm"
-      DB_MYSQL_PASSWORD: "npm"
-      DB_MYSQL_NAME: "npm"
+      - DB_MYSQL_HOST=db
+      - DB_MYSQL_PORT=3306
+      - DB_MYSQL_USER=npm
+      - DB_MYSQL_PASSWORD=npm
+      - DB_MYSQL_NAME=npm
       # If you would rather use Sqlite uncomment this
       # and remove all DB_MYSQL_* lines above
       # DB_SQLITE_FILE: "/data/database.sqlite"
@@ -86,6 +90,8 @@ services:
     restart: unless-stopped
     networks:
       - backend
+    environment:
+      - TZ=Europe/Berlin
     volumes:
       - "/opt/www-public:/var/www/html/"
       - "/etc/localtime:/etc/localtime:ro"
@@ -99,6 +105,8 @@ services:
     restart: unless-stopped
     networks:
       - backend
+    environment:
+      - TZ=Europe/Berlin
     volumes:
       - "/opt/www-vpn:/var/www/html/"
       - "/etc/localtime:/etc/localtime:ro"
@@ -114,8 +122,9 @@ services:
       - 10022:10022
       - 30033:30033
     environment:
-      TS3SERVER_LICENSE: accept
-      TS3SERVER_QUERY_PROTOCOLS: ssh
+      - TZ=Europe/Berlin
+      - TS3SERVER_LICENSE=accept
+      - TS3SERVER_QUERY_PROTOCOLS=ssh
     networks:
       - backend
     volumes:
@@ -129,6 +138,7 @@ services:
     image: "joni1802/ts3-manager"
     restart: unless-stopped
     environment:
+      - TZ=Europe/Berlin
       - WHITELIST=teamspeak
     networks:
       - backend
@@ -143,6 +153,7 @@ services:
       - "/etc/localtime:/etc/localtime:ro"
       - changedetection-data:/datastore
     environment:
+      - TZ=Europe/Berlin
       - USE_X_SETTINGS=1
       - BASE_URL=https://cd.tobsa.dev
     networks:
@@ -153,8 +164,9 @@ services:
     image: containrrr/watchtower
     restart: unless-stopped
     environment:
-      WATCHTOWER_SCHEDULE: "0 0 6 * * *"
-      WATCHTOWER_CLEANUP: "true"
+      - TZ=Europe/Berlin
+      - WATCHTOWER_SCHEDULE=0 0 6 * * *
+      - WATCHTOWER_CLEANUP=true
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock"
       - "/etc/localtime:/etc/localtime:ro"
@@ -164,6 +176,7 @@ services:
     image: lscr.io/linuxserver/healthchecks
     restart: unless-stopped
     environment:
+      - TZ=Europe/Berlin
       - SITE_ROOT=https://hc.tobsa.dev
       - SITE_NAME=TobsA.WTF Healthcheck
       - ALLOWED_HOSTS=["hc.tobsa.dev","hc.tobsa.wtf"]
@@ -182,6 +195,7 @@ services:
     image: quay.io/hedgedoc/hedgedoc:1.9.3
     restart: unless-stopped
     environment:
+      - TZ=Europe/Berlin
       - CMD_DB_URL=mysql://hedgedoc:hedgedoc@db:3306/hedgedoc
       - CMD_DOMAIN=pad.tobsa.wtf
       - CMD_PROTOCOL_USESSL=true
@@ -212,6 +226,8 @@ services:
     image: privatebin/nginx-fpm-alpine:latest
     read_only: true
     restart: unless-stopped
+    environment:
+      - TZ=Europe/Berlin
     volumes:
       - privatebin-data:/srv/data
       - ./privatebin_conf:/srv/cfg/conf.php:ro
@@ -226,7 +242,7 @@ services:
       - "10.14.0.7:53:53/tcp"
       - "10.14.0.7:53:53/udp"
     environment:
-      TZ: 'Europe/Berlin'
+      - TZ=Europe/Berlin
     volumes:
       - 'pihole-data:/etc/pihole'
       - 'pihole-dnsmasq:/etc/dnsmasq.d'
