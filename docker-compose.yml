@@ -20,6 +20,7 @@ volumes:
   privatebin-data:
   pihole-data:
   pihole-dnsmasq:
+  unifi-data:
 
 services:
   db:
@@ -248,3 +249,16 @@ services:
       - 'pihole-dnsmasq:/etc/dnsmasq.d'
     networks:
       - backend
+
+  unifi:
+    container_name: unifi
+    image: jacobalberty/unifi:latest
+    environment:
+      - TZ=Europe/Berlin
+    volumes:
+      - unifi-data:/unifi
+    ports:
+      - 8443:8443
+      - 3478:3478/udp
+      - 8080:8080
+    restart: unless-stopped
