@@ -21,6 +21,7 @@ volumes:
   pihole-data:
   pihole-dnsmasq:
   unifi-data:
+  gotify-data:
 
 services:
   db:
@@ -262,3 +263,11 @@ services:
       - 3478:3478/udp
       - 8080:8080
     restart: unless-stopped
+
+  gotify:
+    container_name: gotify
+    image: gotify/server
+    environment:
+      - TZ=Europe/Berlin
+    volumes:
+      - gotify-data:/app/data
