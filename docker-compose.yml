@@ -24,6 +24,18 @@ volumes:
   gotify-data:
 
 services:
+  watchtower:
+    container_name: watchtower
+    image: containrrr/watchtower
+    restart: unless-stopped
+    environment:
+      - TZ=Europe/Berlin
+      - WATCHTOWER_SCHEDULE=0 0 6 * * *
+      - WATCHTOWER_CLEANUP=true
+      - WATCHTOWER_NOTIFICATION_URL=${WATCHTOWER_NOTIFICATION_URL}
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+      - "/etc/localtime:/etc/localtime:ro"
   db:
     container_name: db
     image: 'mariadb:10'
@@ -161,18 +173,6 @@ services:
     networks:
       - backend
 
-  watchtower:
-    container_name: watchtower
-    image: containrrr/watchtower
-    restart: unless-stopped
-    environment:
-      - TZ=Europe/Berlin
-      - WATCHTOWER_SCHEDULE=0 0 6 * * *
-      - WATCHTOWER_CLEANUP=true
-    volumes:
-      - "/var/run/docker.sock:/var/run/docker.sock"
-      - "/etc/localtime:/etc/localtime:ro"
-
   healthchecks:
     container_name: healthchecks
     image: lscr.io/linuxserver/healthchecks
@@ -271,3 +271,5 @@ services:
       - TZ=Europe/Berlin
     volumes:
       - gotify-data:/app/data
+    networks:
+      - backend
