@@ -109,6 +109,8 @@ services:
     volumes:
       - "/opt/www-public:/var/www/html/"
       - "/etc/localtime:/etc/localtime:ro"
+    labels:
+      - "com.centurylinklabs.watchtower.enable=false"
     depends_on:
       - db
 
@@ -124,6 +126,8 @@ services:
     volumes:
       - "/opt/www-vpn:/var/www/html/"
       - "/etc/localtime:/etc/localtime:ro"
+    labels:
+      - "com.centurylinklabs.watchtower.enable=false"
     depends_on:
       - db
 
@@ -225,7 +229,7 @@ services:
 
   privatebin:
     container_name: privatebin
-    image: privatebin/nginx-fpm-alpine:latest
+    image: privatebin/nginx-fpm-alpine:stable
     read_only: true
     restart: unless-stopped
     environment:
