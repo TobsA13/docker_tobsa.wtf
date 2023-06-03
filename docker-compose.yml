@@ -277,3 +277,4 @@ services:
       - gotify-data:/app/data
     networks:
       - backend
+    restart: unless-stopped
