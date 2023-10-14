@@ -1,0 +1,11 @@
+tls:
+  stores:
+    default:
+      defaultGeneratedCert:
+        resolver: letsencrypt
+        domain:
+          main: tobsa.wtf
+          sans:
+            - "*.tobsa.wtf"
+            - tobsa.dev
+            - "*.tobsa.dev"

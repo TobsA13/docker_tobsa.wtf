@@ -1,0 +1,13 @@
+http:
+  services:
+    service-dms:
+      loadBalancer:
+        servers:
+          - url: "http://10.14.0.4:8000"
+  routers:
+    router-dms:
+      rule: "Host(`dms.tobsa.dev`)"
+      entrypoints: websecure
+      middlewares: vpn-whitelist@file
+      tls: true
+      service: "service-dms"

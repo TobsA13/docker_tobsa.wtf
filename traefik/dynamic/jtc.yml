@@ -1,0 +1,12 @@
+http:
+  services:
+    service-jtc:
+      loadBalancer:
+        servers:
+          - url: "http://10.1.1.10:8123"
+  routers:
+    router-jtc:
+      rule: "Host(`jtc.tobsa.wtf`)"
+      entrypoints: websecure
+      tls: true
+      service: "service-jtc"

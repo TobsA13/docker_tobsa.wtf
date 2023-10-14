@@ -22,8 +22,29 @@ volumes:
   pihole-dnsmasq:
   unifi-data:
   gotify-data:
+  traefik-certs-data:
 
 services:
+  traefik:
+    container_name: traefik
+    image: traefik:latest
+    restart: unless-stopped
+    ports:
+      # Public HTTP Port:
+      - '80:80'
+      # Public HTTPS Port:
+      - '443:443'
+    environment:
+      - HETZNER_API_KEY=${HETZNER_API_KEY}
+      - TZ=Europe/Berlin
+    networks:
+      - backend
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+      - "./traefik/config.yml:/etc/traefik/traefik.yml:ro"
+      - "./traefik/dynamic:/etc/traefik/dynamic:ro"
+      - "traefik-certs-data:/etc/traefik/certs"
+  
   watchtower:
     container_name: watchtower
     image: containrrr/watchtower
@@ -36,6 +57,7 @@ services:
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock"
       - "/etc/localtime:/etc/localtime:ro"
+
   db:
     container_name: db
     image: 'mariadb:10'
@@ -59,6 +81,12 @@ services:
 #      - PMA_ABSOLUTE_URI=pma.tobsa.dev
     networks:
       - backend
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.pma.rule=Host(`pma.tobsa.dev`)"
+      - "traefik.http.routers.pma.entrypoints=websecure"
+      - "traefik.http.routers.pma.middlewares=vpn-whitelist@file"
+      - "traefik.http.routers.pma.tls=true"
     volumes:
       - "/etc/localtime:/etc/localtime:ro"
 
@@ -66,15 +94,6 @@ services:
     container_name: npm
     image: 'jc21/nginx-proxy-manager:latest'
     restart: unless-stopped
-    ports:
-      # Public HTTP Port:
-      - '80:80'
-      # Public HTTPS Port:
-      - '443:443'
-      # Admin Web Port (accessible via NPM #loop):
-      # - '81:81'
-      # Add any other Stream port you want to expose
-      - '1337:1337' # Teststreams
     environment:
       - TZ=Europe/Berlin
       # These are the settings to access your db
@@ -94,6 +113,13 @@ services:
       - "npm_data:/data"
       - "npm_letsencrypt:/etc/letsencrypt"
       - "/etc/localtime:/etc/localtime:ro"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.services.npm.loadbalancer.server.port=81"
+      - "traefik.http.routers.npm.rule=Host(`npm.tobsa.dev`)"
+      - "traefik.http.routers.npm.entrypoints=websecure"
+      - "traefik.http.routers.npm.middlewares=vpn-whitelist@file"
+      - "traefik.http.routers.npm.tls=true"
     depends_on:
       - db
 
@@ -111,6 +137,10 @@ services:
       - "/etc/localtime:/etc/localtime:ro"
     labels:
       - "com.centurylinklabs.watchtower.enable=false"
+      - "traefik.enable=true"
+      - "traefik.http.routers.web-public.rule=Host(`tobsa.wtf`) || Host(`www.tobsa.wtf`) || Host(`tobias-albert.net`) || Host(`www.tobias-albert.net`)"
+      - "traefik.http.routers.web-public.entrypoints=websecure"
+      - "traefik.http.routers.web-public.tls=true"
     depends_on:
       - db
 
@@ -128,6 +158,11 @@ services:
       - "/etc/localtime:/etc/localtime:ro"
     labels:
       - "com.centurylinklabs.watchtower.enable=false"
+      - "traefik.enable=true"
+      - "traefik.http.routers.web-vpn.rule=Host(`tobsa.dev`)"
+      - "traefik.http.routers.web-vpn.entrypoints=websecure"
+      - "traefik.http.routers.web-vpn.middlewares=vpn-whitelist@file"
+      - "traefik.http.routers.web-vpn.tls=true"
     depends_on:
       - db
 
@@ -160,6 +195,12 @@ services:
       - WHITELIST=teamspeak
     networks:
       - backend
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.ts3.rule=Host(`ts3.tobsa.dev`)"
+      - "traefik.http.routers.ts3.entrypoints=websecure"
+      - "traefik.http.routers.ts3.middlewares=vpn-whitelist@file"
+      - "traefik.http.routers.ts3.tls=true"
     depends_on:
       - teamspeak
       
@@ -174,6 +215,12 @@ services:
       - TZ=Europe/Berlin
       - USE_X_SETTINGS=1
       - BASE_URL=https://cd.tobsa.dev
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.cd.rule=Host(`cd.tobsa.dev`)"
+      - "traefik.http.routers.cd.entrypoints=websecure"
+      - "traefik.http.routers.cd.middlewares=vpn-whitelist@file"
+      - "traefik.http.routers.cd.tls=true"
     networks:
       - backend
 
@@ -192,6 +239,11 @@ services:
       - REGENERATE_SETTINGS=True
     volumes:
       - healthchecks-data:/config
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.hc.rule=Host(`hc.tobsa.dev`) || Host(`hc.tobsa.wtf`)"
+      - "traefik.http.routers.hc.entrypoints=websecure"
+      - "traefik.http.routers.hc.tls=true"
     networks:
       - backend
 
@@ -224,6 +276,11 @@ services:
       - hedgedoc-data:/hedgedoc/public/uploads
     networks:
       - backend
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.pad.rule=Host(`pad.tobsa.dev`) || Host(`pad.tobsa.wtf`)"
+      - "traefik.http.routers.pad.entrypoints=websecure"
+      - "traefik.http.routers.pad.tls=true"
     depends_on:
       - db
 
@@ -237,6 +294,11 @@ services:
     volumes:
       - privatebin-data:/srv/data
       - ./privatebin_conf:/srv/cfg/conf.php:ro
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.privatebin.rule=Host(`paste.tobsa.dev`) || Host(`paste.tobsa.wtf`)"
+      - "traefik.http.routers.privatebin.entrypoints=websecure"
+      - "traefik.http.routers.privatebin.tls=true"
     networks:
       - backend
 
@@ -252,6 +314,14 @@ services:
     volumes:
       - 'pihole-data:/etc/pihole'
       - 'pihole-dnsmasq:/etc/dnsmasq.d'
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.services.pihole.loadbalancer.server.port=80"
+      - "traefik.http.routers.pihole.rule=Host(`pihole.tobsa.dev`)"
+      - "traefik.http.routers.pihole.entrypoints=websecure"
+      - "traefik.http.routers.pihole.middlewares=vpn-whitelist@file, pihole-path@docker"
+      - "traefik.http.routers.pihole.tls=true"
+      - "traefik.http.middlewares.pihole-path.addprefix.prefix=/admin"
     networks:
       - backend
 
@@ -266,15 +336,30 @@ services:
       - 8443:8443
       - 3478:3478/udp
       - 8080:8080
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.services.unifi.loadbalancer.server.port=8443"
+      - "traefik.http.services.unifi.loadbalancer.server.scheme=https"
+      - "traefik.http.routers.unifi.rule=Host(`unifi.tobsa.dev`)"
+      - "traefik.http.routers.unifi.entrypoints=websecure"
+      - "traefik.http.routers.unifi.middlewares=vpn-whitelist@file"
+      - "traefik.http.routers.unifi.tls=true"
     restart: unless-stopped
+    networks:
+      - backend
 
   gotify:
     container_name: gotify
     image: gotify/server
+    restart: unless-stopped
     environment:
       - TZ=Europe/Berlin
     volumes:
       - gotify-data:/app/data
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.gotify.rule=Host(`push.tobsa.dev`) || Host(`push.tobsa.wtf`)"
+      - "traefik.http.routers.gotify.entrypoints=websecure"
+      - "traefik.http.routers.gotify.tls=true"
     networks:
       - backend
-    restart: unless-stopped

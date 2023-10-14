@@ -1,0 +1,12 @@
+http:
+  services:
+    service-iot:
+      loadBalancer:
+        servers:
+          - url: "http://10.0.130.10:8123"
+  routers:
+    router-iot:
+      rule: "Host(`iot.tobsa.dev`) || Host(`iot.tobsa.wtf`)"
+      entrypoints: websecure
+      tls: true
+      service: "service-iot"
