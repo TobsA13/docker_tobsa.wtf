@@ -434,5 +434,19 @@ services:
       - "traefik.http.routers.heimdall.middlewares=vpn-whitelist@file"
       - "traefik.http.routers.heimdall.entrypoints=websecure"
       - "traefik.http.routers.heimdall.tls=true"
+
+  collabora:
+    container_name: collabora
+    image: collabora/code
+    environment:
+      - domain=cloud.tobsa.wtf
+      - "extra_params=--o:ssl.enable=false --o:ssl.termination=true"
+    restart: unless-stopped
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.services.collabora.loadbalancer.server.port=9980"
+      - "traefik.http.routers.collabora.rule=(Host(`collabora.tobsa.wtf`))"
+      - "traefik.http.routers.collabora.entrypoints=websecure"
+      - "traefik.http.routers.collabora.tls=true"
     networks:
       - backend
