@@ -32,6 +32,10 @@ entryPoints:
     address: :443
     http:
       tls: true
+    transport:
+      respondingTimeouts:
+        readTimeout: 600s
+        idleTimeout: 600s
 
 
 certificatesResolvers:

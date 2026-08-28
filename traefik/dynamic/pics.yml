@@ -1,0 +1,28 @@
+http:
+  services:
+    service-pics:
+      loadBalancer:
+        servers:
+          - url: "http://10.14.0.5:2283"
+  routers:
+    router-pics-private:
+      rule: "Host(`pics.tobsa.dev`)"
+      entrypoints: websecure
+      middlewares: vpn-whitelist@file
+      tls: true
+      service: "service-pics"
+
+    router-pics:
+      rule: "Host(`pics.tobsa.wtf`) && PathRegexp(`^/share/[a-zA-Z0-9_-]+$`)"
+      priority: 100
+      entrypoints: websecure
+      tls: true
+      service: "service-pics"
+
+    router-pics-403:
+      rule: "Host(`pics.tobsa.wtf`)"
+      priority: 10
+      entrypoints: websecure
+      middlewares: redirect-tobsawtf@file
+      tls: true
+      service: "noop@internal"
