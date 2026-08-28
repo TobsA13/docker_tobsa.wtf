@@ -5,9 +5,24 @@ http:
         servers:
           - url: "http://10.14.0.4:8000"
   routers:
-    router-dms:
+    router-dms-private:
       rule: "Host(`dms.tobsa.dev`)"
       entrypoints: websecure
       middlewares: vpn-whitelist@file
       tls: true
       service: "service-dms"
+
+    router-dms:
+      rule: "Host(`dms.tobsa.wtf`) && PathRegexp(`^/share/[a-zA-Z0-9]{50}$`)"
+      priority: 100
+      entrypoints: websecure
+      tls: true
+      service: "service-dms"
+
+    router-dms-403:
+      rule: "Host(`dms.tobsa.wtf`)"
+      priority: 10
+      entrypoints: websecure
+      middlewares: redirect-tobsawtf@file
+      tls: true
+      service: "noop@internal"

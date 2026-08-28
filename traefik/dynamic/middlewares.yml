@@ -5,3 +5,7 @@ http:
         sourceRange:
           - "10.99.0.0/16"
           - "10.0.0.0/12"
+    redirect-tobsawtf:
+      redirectRegex:
+        regex: ".*"
+        replacement: "https://tobsa.wtf"
