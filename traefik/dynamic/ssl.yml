@@ -9,3 +9,5 @@ tls:
             - "*.tobsa.wtf"
             - tobsa.dev
             - "*.tobsa.dev"
+            - tobsa.de
+            - "*.tobsa.de"
