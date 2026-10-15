@@ -34,7 +34,7 @@ services:
       # Public HTTPS Port:
       - '443:443'
     environment:
-      - HETZNER_API_KEY=${HETZNER_API_KEY}
+      - HETZNER_API_TOKEN=${HETZNER_API_TOKEN}
       - TZ=Europe/Berlin
     networks:
       - backend
