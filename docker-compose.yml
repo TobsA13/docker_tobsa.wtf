@@ -10,8 +10,7 @@ networks:
 volumes:
   mariadb:
   mongodb:
-  npm_data:
-  npm_letsencrypt:
+  pgadmin-data:
   ts3data:
   changedetection-data:
   healthchecks-data:
@@ -100,38 +99,25 @@ services:
     volumes:
       - "/etc/localtime:/etc/localtime:ro"
 
-  npm:
-    container_name: npm
-    image: 'jc21/nginx-proxy-manager:latest'
+  pgadmin:
+    container_name: pgadmin
+    image: dpage/pgadmin4:9
     restart: unless-stopped
     environment:
+      - PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED=False
+      - PGADMIN_CONFIG_ENHANCED_COOKIE_PROTECTION=True
       - TZ=Europe/Berlin
-      # These are the settings to access your db
-      - DB_MYSQL_HOST=db
-      - DB_MYSQL_PORT=3306
-      - DB_MYSQL_USER=npm
-      - DB_MYSQL_PASSWORD=npm
-      - DB_MYSQL_NAME=npm
-      # If you would rather use Sqlite uncomment this
-      # and remove all DB_MYSQL_* lines above
-      # DB_SQLITE_FILE: "/data/database.sqlite"
-      # Uncomment this if IPv6 is not enabled on your host
-      #DISABLE_IPV6: 'true'
     networks:
       - backend
-    volumes:
-      - "npm_data:/data"
-      - "npm_letsencrypt:/etc/letsencrypt"
-      - "/etc/localtime:/etc/localtime:ro"
     labels:
       - "traefik.enable=true"
-      - "traefik.http.services.npm.loadbalancer.server.port=81"
-      - "traefik.http.routers.npm.rule=Host(`npm.tobsa.dev`)"
-      - "traefik.http.routers.npm.entrypoints=websecure"
-      - "traefik.http.routers.npm.middlewares=vpn-whitelist@file"
-      - "traefik.http.routers.npm.tls=true"
-    depends_on:
-      - db
+      - "traefik.http.routers.pga.rule=Host(`pga.tobsa.dev`)"
+      - "traefik.http.routers.pga.entrypoints=websecure"
+      - "traefik.http.routers.pga.middlewares=vpn-whitelist@file"
+      - "traefik.http.routers.pga.tls=true"
+    volumes:
+      - "pgadmin-data:/var/lib/pgadmin"
+      - "/etc/localtime:/etc/localtime:ro"
 
   web-public:
     container_name: web-public
